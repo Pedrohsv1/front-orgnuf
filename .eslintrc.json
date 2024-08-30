@@ -1,3 +1,13 @@
 {
-  "extends": "next/core-web-vitals"
+  "tailwindcss/no-custom-classname": [
+    "warn",
+    {
+      "cssFiles": [
+        "resources/css/app.css",
+        "resources/css/editor.css",
+        "resources/css/font-delivery.css"
+      ]
+    }
+  ],
+  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended"]
 }
