@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3333",
+  baseURL: "https://api-orgnuf.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
