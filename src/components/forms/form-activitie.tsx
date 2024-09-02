@@ -24,6 +24,7 @@ import { PopoverLinks } from "./form-popover-link";
 import { LinksForm } from "../activities/links-forms";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";
+import { PostActivitie } from "@/api/activities/post.activities";
 
 interface FormModal {
   setOpen: () => void;
@@ -36,7 +37,7 @@ export interface ILink {
 
 export const FormActivitie = ({ setOpen }: FormModal) => {
   const [links, setLinks] = useState<ILink[]>([]);
-  const { mutate, isLoading, isError, isSuccess } = useMutation(PostToDo, {
+  const { mutate, isLoading, isError, isSuccess } = useMutation(PostActivitie, {
     onSuccess: () => {
       setOpen();
     },
@@ -54,6 +55,9 @@ export const FormActivitie = ({ setOpen }: FormModal) => {
     mutate({
       title: values.title,
       content: values.content,
+      DeadLineStart: values.date.from,
+      DeadLineEnd: values.date.to,
+      links,
     });
   }
 
@@ -147,9 +151,13 @@ export const FormActivitie = ({ setOpen }: FormModal) => {
           )}
         />
 
-        <div className="mt-2 flex flex-col pb-2 pt-1">
+        <div className="mt-2 flex flex-col gap-2 pb-2 pt-1">
           <PopoverLinks setLinks={setLinks} />
-          {links && <LinksForm links={links} />}
+          {links && (
+            <div className="flex gap-2">
+              <LinksForm links={links} />
+            </div>
+          )}
         </div>
 
         <DialogFooter>

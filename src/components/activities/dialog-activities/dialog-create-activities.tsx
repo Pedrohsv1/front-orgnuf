@@ -19,7 +19,7 @@ interface DialogCreate {
 export const DialogCreateActivitie = ({ refetch }: DialogCreate) => {
   const [open, setOpen] = useState(false);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog defaultOpen={false} open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <ButtonIcon typeButtonIcon="success">
           <Plus className="size-4" />

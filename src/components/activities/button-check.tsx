@@ -1,4 +1,4 @@
-import { Check } from "@phosphor-icons/react/dist/ssr";
+import { Check, Warning } from "@phosphor-icons/react/dist/ssr";
 import { ButtonIcon } from "../button/button-icon";
 import { useToast } from "../ui/use-toast";
 import { useMutation } from "react-query";
@@ -15,6 +15,8 @@ export const ButtonCheck = ({ id, fineshedAt, setFineshedAt }: Params) => {
   const { toast } = useToast();
   const mutatePatchActivitie = useMutation(PatchActivities, {
     onSuccess: (data) => {
+      setFineshedAt(data.result.isCheck ? true : false);
+
       toast({
         title: "Tarefa Atualizada",
         description: `${data.result.title} - ${data.result.isCheck ? "Feito" : "De volta ao trabalho, parece que você ainda n fez essa :("}`,
@@ -28,12 +30,17 @@ export const ButtonCheck = ({ id, fineshedAt, setFineshedAt }: Params) => {
       fineshedAt: new Date(),
       isCheck: !fineshedAt,
     });
-    setFineshedAt(!fineshedAt);
   }
   return (
-    <ButtonIcon typeButtonIcon="success" onClick={ChangeCheck}>
+    <ButtonIcon
+      typeButtonIcon="success"
+      onClick={ChangeCheck}
+      disabled={mutatePatchActivitie.isLoading || mutatePatchActivitie.isError}
+    >
       {mutatePatchActivitie.isLoading ? (
         <div className="size-4 animate-pulse rounded-full border-2 border-actions-green" />
+      ) : mutatePatchActivitie.isError ? (
+        <Warning className={`size-4 text-actions-red`} />
       ) : (
         <Check className={`size-4 ${fineshedAt && "text-actions-green"}`} />
       )}

@@ -7,7 +7,6 @@ import { Button } from "../ui/button";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Label } from "../ui/label";
 import { ILink } from "./form-activitie";
-import { useToast } from "../ui/use-toast";
 import { Paperclip } from "@phosphor-icons/react/dist/ssr";
 
 interface IPopLink {
@@ -15,7 +14,6 @@ interface IPopLink {
 }
 
 export const PopoverLinks = ({ setLinks }: IPopLink) => {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [link, setLink] = useState({
     link: "",
@@ -28,12 +26,6 @@ export const PopoverLinks = ({ setLinks }: IPopLink) => {
       setLink({
         link: "",
         name: "",
-      });
-    } else {
-      toast({
-        title: "Nome ou link pequeno demais! Tente outra coisa",
-        description:
-          "O nome precisa de no mínimo 4 letras, do mesmo modo o link",
       });
     }
   }
@@ -55,6 +47,17 @@ export const PopoverLinks = ({ setLinks }: IPopLink) => {
             defaultValue="100%"
             className="col-span-2 h-8"
           />
+          <div className="col-span-3">
+            {link.name.length <= 3 && link.name.length > 0 ? (
+              <p className="text-sm text-actions-red">
+                Precisa ser no mínimo com 4 caracteres
+              </p>
+            ) : link.name.length === 0 ? (
+              <p className="text-sm text-actions-red">
+                O nome não pode ser vazio
+              </p>
+            ) : null}
+          </div>
         </div>
         <div className="grid grid-cols-3 items-center gap-4">
           <Label htmlFor="link">Link</Label>
@@ -65,6 +68,17 @@ export const PopoverLinks = ({ setLinks }: IPopLink) => {
             defaultValue="300px"
             className="col-span-2 h-8"
           />
+          <div className="col-span-3">
+            {link.link.length <= 3 && link.link.length > 0 ? (
+              <p className="text-sm text-actions-red">
+                Precisa ser no mínimo com 4 caracteres
+              </p>
+            ) : link.link.length === 0 ? (
+              <p className="text-sm text-actions-red">
+                Link não pode ser vazio
+              </p>
+            ) : null}
+          </div>
         </div>
         <Button onClick={() => onSubmit()}>Adicionar</Button>
       </PopoverContent>

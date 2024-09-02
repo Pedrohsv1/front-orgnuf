@@ -37,8 +37,6 @@ export const Activitie = (act: Activities) => {
     }
   }, []);
 
-  React.useEffect(() => {}, []);
-
   return (
     <div className="todo flex items-center gap-4 rounded-lg p-4 hover:bg-primary-500/5">
       {/* IsDone */}

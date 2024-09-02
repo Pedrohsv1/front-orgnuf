@@ -16,7 +16,7 @@ export const ActivitiesLink = ({ links }: ILinks) => {
   return (
     <>
       {links.map((l) => (
-        <TooltipProvider>
+        <TooltipProvider key={l.id}>
           <Tooltip>
             <TooltipTrigger>
               <Link
@@ -29,7 +29,9 @@ export const ActivitiesLink = ({ links }: ILinks) => {
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{l.link}</p>
+              <p>
+                {l.link.length > 25 ? `${l.link.substring(0, 25)}...` : l.link}
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
