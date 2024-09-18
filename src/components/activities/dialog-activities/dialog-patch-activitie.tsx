@@ -10,15 +10,9 @@ import {
 
 import { ButtonIcon } from "../../button/button-icon";
 import { Pencil } from "@phosphor-icons/react/dist/ssr";
-import { FormToDoPatch } from "../../forms/form-to-do-patch";
-import { ToDos } from "@/api/promise.type";
+import { FormActivitiePatch } from "@/components/forms/form-activitie-patch";
 
-interface DialogPatch {
-  setToDo: React.Dispatch<React.SetStateAction<ToDos>>;
-  todo: ToDos;
-}
-
-export const DialogPatchTodo = ({ setToDo, todo }: DialogPatch) => {
+export const DialogPatchActivitie = () => {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -34,13 +28,7 @@ export const DialogPatchTodo = ({ setToDo, todo }: DialogPatch) => {
             Crie uma tarefa para seu dia ou semana que seja simples e direta.
           </DialogDescription>
         </DialogHeader>
-        <FormToDoPatch
-          todo={todo}
-          setOpen={(todo: ToDos) => {
-            setToDo(todo);
-            setOpen(!open);
-          }}
-        />
+        <FormActivitiePatch />
       </DialogContent>
     </Dialog>
   );

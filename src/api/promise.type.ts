@@ -55,3 +55,12 @@ export interface Links {
   link: string;
   activitiesId: string;
 }
+
+export interface Goals {
+  id: string;
+  title: string;
+  isCheck: boolean;
+  fineshedAt: Date;
+  days: number[];
+  isCompleted: boolean;
+}

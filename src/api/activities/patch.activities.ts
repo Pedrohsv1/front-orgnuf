@@ -1,3 +1,4 @@
+import { ILink } from "@/components/forms/form-activitie-patch";
 import axiosInstance from "../axiosInstance";
 import { ResponseBack, Activities } from "../promise.type";
 
@@ -8,6 +9,9 @@ interface ParamsPatchActivities {
   fineshedAt?: any;
   isFavorite?: boolean;
   isCheck?: boolean;
+  DeadLineStart?: Date;
+  DeadLineEnd?: Date;
+  links?: ILink[];
 }
 
 interface ResponsePatchActivities extends ResponseBack {
@@ -21,6 +25,9 @@ export const PatchActivities = async ({
   isFavorite,
   title,
   isCheck,
+  DeadLineEnd,
+  DeadLineStart,
+  links,
 }: ParamsPatchActivities): Promise<ResponsePatchActivities> => {
   const result = await axiosInstance.patch<ResponsePatchActivities>(
     `/activities/${id}`,
@@ -30,6 +37,11 @@ export const PatchActivities = async ({
       fineshedAt,
       isCheck,
       isFavorite,
+      DeadLineStart,
+      DeadLineEnd,
+      links: {
+        create: links,
+      },
     },
   );
 

@@ -14,38 +14,40 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../button/button";
 import { useMutation } from "react-query";
-import { Check, Trash, Warning } from "@phosphor-icons/react/dist/ssr";
+import { Check, Warning } from "@phosphor-icons/react/dist/ssr";
 import { DialogFooter } from "../ui/dialog";
 import { PatchToDos } from "@/api/toDos/patch.todos";
-import { ToDos } from "@/api/promise.type";
-import { Delete } from "lucide-react";
+import { todo } from "node:test";
+import { useContext } from "react";
+import { ToDoC } from "../todos/toDo";
+import { ToDoContext } from "../todos/toDos";
 
-interface FormModal {
-  setOpen: (todo: ToDos) => void;
-  todo: ToDos;
-}
+export const FormToDoPatch = () => {
+  const contextValue = useContext(ToDoC);
+  const contextAllValue = useContext(ToDoContext);
 
-export const FormToDoPatch = ({ setOpen, todo }: FormModal) => {
   const { mutate, isLoading, isError, isSuccess } = useMutation(PatchToDos, {
-    onSuccess: (data) => {
-      setOpen(data.result);
+    onSuccess: () => {
+      contextAllValue?.refetch();
     },
   });
 
   const form = useForm<z.infer<typeof toDoPatchSchema>>({
     resolver: zodResolver(toDoPatchSchema),
     defaultValues: {
-      title: todo.title,
-      content: todo.content ? todo.content : "",
+      title: contextValue?.todo.title ? contextValue?.todo.title : "",
+      content: contextValue?.todo.content ? contextValue?.todo.content : "",
     },
   });
 
   function onSubmit(values: z.infer<typeof toDoPatchSchema>) {
-    mutate({
-      id: todo.id,
-      title: values.title,
-      content: values.content,
-    });
+    if (contextValue) {
+      mutate({
+        id: contextValue?.todo.id,
+        title: values.title,
+        content: values.content,
+      });
+    }
   }
 
   return (

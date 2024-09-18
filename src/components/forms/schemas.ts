@@ -9,7 +9,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(6, "Por favor, escreva um username com mais de 6 caracteres")
-    .max(100, "No maáximo 100 caracteres"),
+    .max(100, "No máximo 100 caracteres"),
 });
 
 export const toDoSchema = z.object({
@@ -20,7 +20,7 @@ export const toDoSchema = z.object({
   content: z
     .string()
     .min(6, "Por favor, escreva uma tarefa com mais digitos")
-    .max(100, "Limite de caracteres ultrapassados")
+    .max(2000, "Limite de caracteres ultrapassados")
     .optional()
     .or(z.literal("")),
 });
@@ -35,7 +35,7 @@ export const toDoPatchSchema = z.object({
   content: z
     .string()
     .min(6, "Por favor, escreva uma tarefa com mais digitos")
-    .max(100, "Limite de caracteres ultrapassados")
+    .max(2000, "Limite de caracteres ultrapassados")
     .optional()
     .or(z.literal("")),
 });
@@ -56,7 +56,7 @@ export const ActivitieSchema = z.object({
   content: z
     .string()
     .min(6, "Por favor, escreva uma tarefa com mais digitos")
-    .max(100, "Limite de caracteres ultrapassados")
+    .max(2000, "Limite de caracteres ultrapassados")
     .optional()
     .or(z.literal("")),
   date: z
@@ -68,5 +68,31 @@ export const ActivitieSchema = z.object({
       (data) => data.from > addDays(new Date(), -1),
       "End date must be in the future",
     ),
+  links: z.array(LinksSchema).optional(),
+});
+
+export const ActivitieSchemaPatch = z.object({
+  title: z
+    .string()
+    .min(3, "Por favor, escreva uma tarefa com mais digitos")
+    .max(100, "Limite de caracteres ultrapassados")
+    .optional(),
+  content: z
+    .string()
+    .min(6, "Por favor, escreva uma tarefa com mais digitos")
+    .max(2000, "Limite de caracteres ultrapassados")
+    .optional()
+    .or(z.literal(""))
+    .optional(),
+  date: z
+    .object({
+      from: z.date(),
+      to: z.date(),
+    })
+    .refine(
+      (data) => data.from > addDays(new Date(), -1),
+      "End date must be in the future",
+    )
+    .optional(),
   links: z.array(LinksSchema).optional(),
 });

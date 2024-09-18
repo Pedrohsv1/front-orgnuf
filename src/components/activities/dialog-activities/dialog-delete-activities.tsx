@@ -14,16 +14,14 @@ import { Trash, Warning } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "../../button/button";
 import { useMutation } from "react-query";
 import { useToast } from "../../ui/use-toast";
-import { ActivitieContext } from "../activities";
+import { ActivitiesContext } from "../activities";
 import { DeleteActivitie } from "@/api/activities/delete.activities";
+import { ActivitieContext } from "../activitie";
 
-interface IDialogDelete {
-  id: string;
-}
-
-export const DialogDeleteActivities = ({ id }: IDialogDelete) => {
+export const DialogDeleteActivities = () => {
   const { toast } = useToast();
-  const contextValue = useContext(ActivitieContext);
+  const activities = useContext(ActivitiesContext);
+  const activitieContext = useContext(ActivitieContext);
 
   const { mutate, isLoading, isSuccess, isError } = useMutation(
     DeleteActivitie,
@@ -32,7 +30,7 @@ export const DialogDeleteActivities = ({ id }: IDialogDelete) => {
         toast({
           title: "Tarefa Deletada",
         });
-        contextValue?.refetch();
+        activities?.refetch();
         setOpen(!open);
       },
     },
@@ -41,9 +39,11 @@ export const DialogDeleteActivities = ({ id }: IDialogDelete) => {
   const [open, setOpen] = useState(false);
 
   async function Delete() {
-    mutate({
-      id,
-    });
+    if (activitieContext) {
+      mutate({
+        id: activitieContext?.activitie.id,
+      });
+    }
   }
 
   return (

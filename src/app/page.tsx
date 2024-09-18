@@ -1,6 +1,6 @@
 "use client";
 import { ActivitiesList } from "@/components/activities/activities";
-import authProtector from "@/components/authProtector";
+import GoalsList from "@/components/goals/goals";
 import { Navbar } from "@/components/navbar/navbar";
 import { ToDosList } from "@/components/todos/toDos";
 
@@ -11,9 +11,9 @@ function Home() {
       <div className="grid h-screen w-full grid-cols-[1fr_1fr_300px]">
         <ToDosList />
         <ActivitiesList />
-        <div></div>
+        <GoalsList />
       </div>
     </main>
   );
 }
-export default authProtector(Home);
+export default Home;

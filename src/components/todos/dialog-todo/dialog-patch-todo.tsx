@@ -13,12 +13,8 @@ import { Pencil } from "@phosphor-icons/react/dist/ssr";
 import { FormToDoPatch } from "../../forms/form-to-do-patch";
 import { ToDos } from "@/api/promise.type";
 
-interface DialogPatch {
-  setToDo: React.Dispatch<React.SetStateAction<ToDos>>;
-  todo: ToDos;
-}
+export const DialogPatchTodo = () => {
 
-export const DialogPatchTodo = ({ setToDo, todo }: DialogPatch) => {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -35,11 +31,7 @@ export const DialogPatchTodo = ({ setToDo, todo }: DialogPatch) => {
           </DialogDescription>
         </DialogHeader>
         <FormToDoPatch
-          todo={todo}
-          setOpen={(todo: ToDos) => {
-            setToDo(todo);
-            setOpen(!open);
-          }}
+          
         />
       </DialogContent>
     </Dialog>

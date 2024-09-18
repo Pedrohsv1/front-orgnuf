@@ -2,21 +2,19 @@ import { Check, Warning } from "@phosphor-icons/react/dist/ssr";
 import { ButtonIcon } from "../button/button-icon";
 import { useToast } from "../ui/use-toast";
 import { useMutation } from "react-query";
-import { Dispatch } from "react";
+import { Dispatch, useContext } from "react";
 import { PatchActivities } from "@/api/activities/patch.activities";
+import { ActivitieContext } from "./activitie";
+import { ActivitiesContext } from "./activities";
 
-interface Params {
-  id: string;
-  fineshedAt: boolean;
-  setFineshedAt: Dispatch<React.SetStateAction<boolean>>;
-}
-
-export const ButtonCheck = ({ id, fineshedAt, setFineshedAt }: Params) => {
+export const ButtonCheck = () => {
   const { toast } = useToast();
+  const activitieContext = useContext(ActivitieContext);
+  const activities = useContext(ActivitiesContext);
+
   const mutatePatchActivitie = useMutation(PatchActivities, {
     onSuccess: (data) => {
-      setFineshedAt(data.result.isCheck ? true : false);
-
+      activities?.refetch();
       toast({
         title: "Tarefa Atualizada",
         description: `${data.result.title} - ${data.result.isCheck ? "Feito" : "De volta ao trabalho, parece que você ainda n fez essa :("}`,
@@ -25,11 +23,18 @@ export const ButtonCheck = ({ id, fineshedAt, setFineshedAt }: Params) => {
   });
 
   function ChangeCheck() {
-    mutatePatchActivitie.mutate({
-      id,
-      fineshedAt: new Date(),
-      isCheck: !fineshedAt,
-    });
+    if (activities && activitieContext) {
+      mutatePatchActivitie.mutate({
+        id: activitieContext?.activitie.id,
+        isCheck: !activitieContext?.activitie.isCheck,
+        fineshedAt: new Date(),
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao tentar atualizar a atividade",
+      });
+    }
   }
   return (
     <ButtonIcon
@@ -38,11 +43,13 @@ export const ButtonCheck = ({ id, fineshedAt, setFineshedAt }: Params) => {
       disabled={mutatePatchActivitie.isLoading || mutatePatchActivitie.isError}
     >
       {mutatePatchActivitie.isLoading ? (
-        <div className="size-4 animate-pulse rounded-full border-2 border-actions-green" />
+        <div className="h-4 w-4 animate-pulse rounded-full border-2 border-actions-green" />
       ) : mutatePatchActivitie.isError ? (
         <Warning className={`size-4 text-actions-red`} />
       ) : (
-        <Check className={`size-4 ${fineshedAt && "text-actions-green"}`} />
+        <Check
+          className={`size-4 ${activitieContext?.activitie.isCheck && "text-actions-green"}`}
+        />
       )}
     </ButtonIcon>
   );

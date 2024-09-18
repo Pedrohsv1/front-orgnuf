@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { ActivitieSchema } from "./schemas";
+import { ActivitieSchema, ActivitieSchemaPatch } from "./schemas";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,7 +13,6 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { useMutation } from "react-query";
-import { PostToDo } from "@/api/toDos/post.todos";
 import { Check, Warning } from "@phosphor-icons/react/dist/ssr";
 import { DialogFooter } from "../ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -22,43 +21,70 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { PopoverLinks } from "./form-popover-link";
 import { LinksForm } from "../activities/links-forms";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { PostActivitie } from "@/api/activities/post.activities";
-
-interface FormModal {
-  setOpen: () => void;
-}
+import { useToast } from "../ui/use-toast";
+import { ActivitiesContext } from "../activities/activities";
+import { PatchActivities } from "@/api/activities/patch.activities";
+import { ActivitieContext } from "../activities/activitie";
 
 export interface ILink {
   link: string;
   name: string;
 }
 
-export const FormActivitie = ({ setOpen }: FormModal) => {
-  const [links, setLinks] = useState<ILink[]>([]);
-  const { mutate, isLoading, isError, isSuccess } = useMutation(PostActivitie, {
-    onSuccess: () => {
-      setOpen();
-    },
-  });
+export const FormActivitiePatch = () => {
+  const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof ActivitieSchema>>({
-    resolver: zodResolver(ActivitieSchema),
+  const activities = useContext(ActivitiesContext);
+  const activitiesContext = useContext(ActivitieContext);
+
+  const [links, setLinks] = useState<ILink[]>(
+    activitiesContext?.activitie.links
+      ? activitiesContext?.activitie.links
+      : [],
+  );
+
+  const { mutate, isLoading, isError, isSuccess } = useMutation(
+    PatchActivities,
+    {
+      onSuccess: () => {
+        activities?.refetch();
+      },
+      onError: (err) => {
+        console.log(err);
+        toast({
+          title: "Erro ao editar atividade",
+          description: "Tente novamente mais tarde",
+        });
+      },
+    },
+  );
+
+  const form = useForm<z.infer<typeof ActivitieSchemaPatch>>({
+    resolver: zodResolver(ActivitieSchemaPatch),
     defaultValues: {
-      title: "",
-      content: "",
+      title: activitiesContext?.activitie.title
+        ? activitiesContext?.activitie.title
+        : "",
+      content: activitiesContext?.activitie.content
+        ? activitiesContext?.activitie.content
+        : "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof ActivitieSchema>) {
-    mutate({
-      title: values.title,
-      content: values.content,
-      DeadLineStart: values.date.from,
-      DeadLineEnd: values.date.to,
-      links,
-    });
+  function onSubmit(values: z.infer<typeof ActivitieSchemaPatch>) {
+    if (activitiesContext) {
+      mutate({
+        id: activitiesContext?.activitie.id,
+        title: values.title,
+        content: values.content,
+        ...(values.date && {
+          DeadLineStart: values.date.from ?? "",
+          DeadLineEnd: values.date.to,
+        }),
+      });
+    }
   }
 
   return (
@@ -84,21 +110,8 @@ export const FormActivitie = ({ setOpen }: FormModal) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Descricão</FormLabel>
-              <div className="text-sm text-bg-100/50">
-                2000/
-                <span
-                  className={`${field.value?.length && field.value?.length < 1000 ? "text-actions-green" : field.value?.length && field.value?.length < 1900 ? "text-actions-yellow" : "text-actions-red"}`}
-                >
-                  {field.value?.length}
-                </span>
-              </div>
               <FormControl>
-                <Textarea
-                  maxLength={2000}
-                  className="h-60 resize-none"
-                  placeholder="Descricão"
-                  {...field}
-                />
+                <Textarea placeholder="Descricão" {...field} />
               </FormControl>
               <FormDescription>Fale um pouco da atividade.</FormDescription>
               <FormMessage />
@@ -165,7 +178,7 @@ export const FormActivitie = ({ setOpen }: FormModal) => {
         />
 
         <div className="mt-2 flex flex-col gap-2 pb-2 pt-1">
-          <PopoverLinks setLinks={setLinks} />
+          {/* <PopoverLinks setLinks={setLinks} /> */}
           {links && (
             <div className="flex gap-2">
               <LinksForm links={links} />

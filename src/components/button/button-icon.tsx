@@ -2,7 +2,7 @@ import { ComponentProps } from "react";
 import { tv, VariantProps } from "tailwind-variants";
 
 const TVButtonIcon = tv({
-  base: "size-8  flex items-center justify-center rounded-lg  ",
+  base: "size-8  flex items-center justify-center rounded-lg",
   variants: {
     typeButtonIcon: {
       base: "bg-bg-700 hover:bg-primary-500/20 text-bg-100 hover:text-primary-500",

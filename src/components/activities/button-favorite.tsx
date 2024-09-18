@@ -3,18 +3,14 @@ import { ButtonIcon } from "../button/button-icon";
 import { useToast } from "../ui/use-toast";
 import { useMutation } from "react-query";
 import { Dispatch, useContext } from "react";
-import { ActivitieContext } from "./activities";
+import { ActivitiesContext } from "./activities";
 import { PatchActivities } from "@/api/activities/patch.activities";
+import { ActivitieContext } from "./activitie";
 
-interface Params {
-  id: string;
-  favorite: boolean;
-  setFavorite: Dispatch<React.SetStateAction<boolean>>;
-}
-
-export const ButtonFavorite = ({ id, favorite, setFavorite }: Params) => {
+export const ButtonFavorite = () => {
   const { toast } = useToast();
-  const contextValue = useContext(ActivitieContext);
+  const activities = useContext(ActivitiesContext);
+  const activitieContext = useContext(ActivitieContext);
 
   const mutatePatchActivitie = useMutation(PatchActivities, {
     onSuccess: (data) => {
@@ -22,16 +18,22 @@ export const ButtonFavorite = ({ id, favorite, setFavorite }: Params) => {
         title: "Tarefa Atualizada",
         description: `${data.result.title} - ${data.result.isFavorite ? "Favoritado" : "Desfavoritado"}`,
       });
-      contextValue?.refetch();
+      activities?.refetch();
     },
   });
 
   function ChangeFavorite() {
-    mutatePatchActivitie.mutate({
-      id,
-      isFavorite: !favorite,
-    });
-    setFavorite(!favorite);
+    if (activities && activitieContext) {
+      mutatePatchActivitie.mutate({
+        id: activitieContext?.activitie.id,
+        isFavorite: !activitieContext?.activitie.isFavorite,
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao tentar atualizar a atividade",
+      });
+    }
   }
   return (
     <ButtonIcon typeButtonIcon="favorite" onClick={ChangeFavorite}>
@@ -39,8 +41,8 @@ export const ButtonFavorite = ({ id, favorite, setFavorite }: Params) => {
         <div className="size-4 animate-pulse rounded-full border-2 border-actions-yellow" />
       ) : (
         <Star
-          className={`size-4 ${favorite && "text-actions-yellow"}`}
-          weight={`${favorite ? "fill" : "regular"}`}
+          className={`${activitieContext?.activitie.isFavorite && "text-actions-yellow"} size-4`}
+          weight={`${activitieContext?.activitie.isFavorite ? "fill" : "regular"}`}
         />
       )}
     </ButtonIcon>
