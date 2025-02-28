@@ -26,7 +26,7 @@ export const Last15Days = () => {
     return date.format("YYYY-MM-DD"); // Formata a data como YYYY-MM-DD
   }).reverse(); // Reverte para que os dias estejam em ordem cronológica
 
-  const getOpacityClass = (percentage) => {
+  const getOpacityClass = (percentage: number) => {
     if (percentage >= 90) return "bg-primary-500/90";
     if (percentage >= 80) return "bg-primary-500/80";
     if (percentage >= 70) return "bg-primary-500/70";
