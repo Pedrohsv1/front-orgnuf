@@ -7,12 +7,13 @@ import { GoalsContext } from "./goals";
 import { GoalContext } from "./goal";
 import { PatchGoals } from "@/api/goals/patch.goals";
 import confetti from "canvas-confetti";
+import { PostCompletion } from "@/api/completions/create-completion";
 
 export const ButtonCheck = () => {
   const { toast } = useToast();
   const contextValue = useContext(GoalContext);
   const contextAllValues = useContext(GoalsContext);
-  const glassesCool = confetti.shapeFromText({ text: '😎'});
+  const glassesCool = confetti.shapeFromText({ text: "😎" });
 
   const defaults = {
     spread: 360,
@@ -28,31 +29,29 @@ export const ButtonCheck = () => {
     const origin = {
       x: x / window.innerWidth,
       y: y / window.innerHeight,
-    }
+    };
 
     confetti({
       ...defaults,
       particleCount: 30,
       origin,
     });
-  
+
     confetti({
       ...defaults,
       particleCount: 5,
-      shapes: ['square'],
+      shapes: ["square"],
       origin,
     });
-  
+
     confetti({
       ...defaults,
       particleCount: 15,
-      scalar: 1/2,
-      shapes: ['circle'],
+      scalar: 1 / 2,
+      shapes: ["circle"],
       origin,
     });
   }
-  
-
 
   const mutatePatchGoal = useMutation(PatchGoals, {
     onSuccess: (data) => {
@@ -60,18 +59,25 @@ export const ButtonCheck = () => {
 
       toast({
         title: "Ótimo trabalho",
-        description: `${data.result.isCheck ? "Ótimo trabalho concluindo esse obejtivo!" : "De volta ao trabalho"}`,
+        description: `${data.result.isCheck ? "Ótimo trabalho concluindo esse objetivo!" : "De volta ao trabalho"}`,
+      });
+    },
+  });
+
+  const mutateCompletion = useMutation(PostCompletion, {
+    onSuccess: (data) => {
+      contextAllValues?.refetch();
+
+      toast({
+        title: "Ótimo trabalho",
+        description: `Ótimo trabalho concluindo esse goal! ${"success"}`,
       });
     },
   });
 
   function ChangeCheck(event: React.MouseEvent<HTMLButtonElement>) {
     if (contextValue) {
-      mutatePatchGoal.mutate({
-        id: contextValue?.goal.id,
-        isCheck: !contextValue?.goal.isCheck,
-        fineshedAt: new Date(),
-      });
+      mutateCompletion.mutate(contextValue?.goal.id);
 
       const rect = event.currentTarget.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
@@ -80,7 +86,11 @@ export const ButtonCheck = () => {
     }
   }
   return (
-    <ButtonIcon typeButtonIcon="success" onClick={ChangeCheck} className={`relative ${contextValue?.goal.isCompleted ? 'bg-actions-green/10': ''}`}>
+    <ButtonIcon
+      typeButtonIcon="success"
+      onClick={ChangeCheck}
+      className={`relative ${contextValue?.goal.isCompleted ? "bg-actions-green/10" : ""}`}
+    >
       {mutatePatchGoal.isLoading ? (
         <div className="size-4 animate-pulse rounded-full border-2 border-actions-green" />
       ) : (
@@ -89,6 +99,5 @@ export const ButtonCheck = () => {
         />
       )}
     </ButtonIcon>
-    
   );
 };
