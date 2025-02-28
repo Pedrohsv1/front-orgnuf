@@ -20,7 +20,7 @@ export const PatchGoals = async ({
   isCheck,
   days,
 }: ParamsPatchGoal): Promise<ResponsePatchGoal> => {
-  const result = await axiosInstance.patch<ResponsePatchGoal>(`/todos/${id}`, {
+  const result = await axiosInstance.patch<ResponsePatchGoal>(`/goal/${id}`, {
     title,
     fineshedAt,
     isCheck,

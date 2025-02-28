@@ -6,7 +6,7 @@ interface GetGoals extends ResponseBack {
 }
 
 export const GetGoals = async (): Promise<GetGoals> => {
-  const data = await axiosInstance.get<GetGoals>("/todos");
+  const data = await axiosInstance.get<GetGoals>("/goal");
   
   return data.data;
 };
